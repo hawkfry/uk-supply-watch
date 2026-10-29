@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UK supply watch</title>
+<style>
+  :root {
+    --bg: #141210;
+    --ink: #f4efe6;
+    --muted: #9c9488;
+    --line: #2c2823;
+    --calm: #9aaf86;
+    --watch: #d4a45a;
+    --elevated: #e08a45;
+    --stress: #d85a3a;
+    --severe: #c4322a;
+    --serif: "Iowan Old Style", Palatino, "Palatino Linotype", Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink); }
+  body {
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.45;
+    min-height: 100vh;
+    padding: 20px 16px 64px;
+  }
+  @media (min-width: 800px) {
+    body { padding: 28px 32px 64px; }
+  }
+  header {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: baseline;
+    margin-bottom: 14px;
+  }
+  .mark {
+    font-family: var(--serif);
+    font-size: 22px;
+    letter-spacing: -0.03em;
+  }
+  .when { color: var(--muted); font-variant-numeric: tabular-nums; font-size: 12px; text-align: right; }
+  .legend {
+    color: var(--muted);
+    font-size: 13px;
+    margin: 0 0 12px;
+  }
+  .board {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  @media (min-width: 980px) {
+    .board { grid-template-columns: repeat(4, 1fr); }
+  }
+  .tile {
+    border: 1px solid var(--line);
+    min-height: 132px;
+    padding: 10px 36px 8px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    position: relative;
+  }
+  .tile-top {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+  .tile .name {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+  .move {
+    font-variant-numeric: tabular-nums;
+    font-size: 12px;
+    line-height: 1.25;
+  }
+  .move.worse { color: var(--stress); }
+  .move.easing { color: var(--calm); }
+  .move.flat { color: var(--muted); }
+  .tile .num {
+    font-family: var(--serif);
+    font-size: 40px;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+    margin-top: 6px;
+  }
+  .tile .bandname {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 15px;
+  }
+  .tile .glance { display: none; }
+  .info {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 8px 8px 0 0;
+  }
+  .info span {
+    display: inline-flex;
+    width: 18px;
+    height: 18px;
+    border: 1px solid #5c564e;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 12px;
+    line-height: 1;
+  }
+  .sheet {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 8, 7, 0.72);
+    z-index: 20;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .sheet[hidden] { display: none; }
+  .sheet-card {
+    background: #1c1916;
+    border-top: 1px solid var(--line);
+    width: min(560px, 100%);
+    padding: 16px 16px 28px;
+    max-height: 72vh;
+    overflow: auto;
+  }
+  .sheet-card header {
+    margin-bottom: 8px;
+  }
+  .sheet-card h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .sheet-card p {
+    margin: 8px 0 0;
+    color: #ddd6cb;
+    font-size: 15px;
+  }
+  .sheet-close {
+    border: 0;
+    background: transparent;
+    color: var(--ink);
+    font-size: 15px;
+    min-height: 44px;
+    padding: 0 4px;
+    cursor: pointer;
+  }
+  svg.line {
+    width: 100%;
+    height: 28px;
+    display: block;
+    margin-top: auto;
+  }
+  .blends {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .blend {
+    border-top: 1px solid var(--line);
+    padding-top: 8px;
+  }
+  .blend .kicker {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .blend .num {
+    font-family: var(--serif);
+    font-size: 32px;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+  }
+  .blend .bandname { font-family: var(--serif); font-style: italic; font-size: 14px; }
+  [data-band="Calm"] { color: var(--calm); }
+  [data-band="Watch"] { color: var(--watch); }
+  [data-band="Elevated"] { color: var(--elevated); }
+  [data-band="Stress"] { color: var(--stress); }
+  [data-band="Severe"] { color: var(--severe); }
+  h2 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 20px;
+    margin: 36px 0 8px;
+    letter-spacing: -0.02em;
+  }
+  .sub { color: var(--muted); font-size: 13px; margin: 0 0 8px; }
+  .notes { border-top: 1px solid var(--line); }
+  .note {
+    display: grid;
+    grid-template-columns: 52px 1fr;
+    gap: 4px 12px;
+    border-bottom: 1px solid var(--line);
+    padding: 14px 0;
+  }
+  .note .num {
+    font-family: var(--serif);
+    font-size: 28px;
+    line-height: 0.9;
+    font-variant-numeric: tabular-nums;
+  }
+  .note h3 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .note .bandname { font-family: var(--serif); font-style: italic; font-weight: 400; }
+  .note p { grid-column: 2; margin: 0; color: #ddd6cb; font-size: 14px; }
+  .stack { border-top: 1px solid var(--line); }
+  .row {
+    border-bottom: 1px solid var(--line);
+    padding: 14px 0 16px;
+  }
+  .row-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+  }
+  .row h3 {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+  .row-score {
+    font-family: var(--serif);
+    font-size: 28px;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+    flex: none;
+  }
+  .row .stance {
+    color: var(--muted);
+    font-size: 13px;
+    margin-top: 2px;
+  }
+  .row p {
+    margin: 8px 0 0;
+    color: #ddd6cb;
+    font-size: 15px;
+    line-height: 1.45;
+  }
+  .places {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-top: 12px;
+  }
+  @media (min-width: 800px) {
+    .places { grid-template-columns: repeat(4, 1fr); }
+  }
+  @media (max-width: 520px) {
+    .places { grid-template-columns: 1fr; }
+    .series { grid-template-columns: 1fr; }
+    .role { min-height: 0; }
+    .note { grid-template-columns: 1fr; }
+    .note p { grid-column: 1; }
+  }
+  .place { border-top: 1px solid var(--line); padding-top: 10px; }
+  .place strong { display: block; font-weight: 600; }
+  .role { color: var(--muted); font-size: 13px; min-height: 2.6em; }
+  .bar { height: 8px; background: #2a2622; margin: 10px 0 6px; }
+  .bar > span { display: block; height: 100%; background: var(--ink); }
+  .meta { font-variant-numeric: tabular-nums; font-size: 13px; color: var(--muted); }
+  .series {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (min-width: 900px) {
+    .series { grid-template-columns: repeat(5, 1fr); }
+  }
+  .spark { border-top: 1px solid var(--line); padding-top: 10px; }
+  .spark .px {
+    font-family: var(--serif);
+    font-size: 28px;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+  }
+  .spark .lbl { color: var(--muted); font-size: 13px; }
+  .spark svg.line { height: 42px; }
+  details { margin-top: 36px; color: var(--muted); font-size: 14px; }
+  summary { cursor: pointer; color: var(--ink); }
+  li { margin: 6px 0; }
+  .err {
+    border: 1px solid var(--stress);
+    color: #f0c2b6;
+    padding: 10px 12px;
+    margin-bottom: 16px;
+    font-size: 14px;
+  }
+  .disclaimer {
+    max-width: 68ch;
+    color: var(--muted);
+    font-size: 13px;
+    margin: 28px 0 0;
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="mark">UK supply watch</div>
+  <div class="when" id="when">Loading</div>
+</header>
+<p class="legend">Worst first.</p>
+<div id="err"></div>
+<div class="board" id="board"></div>
+<section class="blends" id="blends" aria-label="Overall blends"></section>
+<div class="sheet" id="sheet" hidden>
+  <div class="sheet-card" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+    <header>
+      <h3 id="sheet-title"></h3>
+      <button type="button" class="sheet-close" id="sheet-close">Close</button>
+    </header>
+    <p id="sheet-body"></p>
+  </div>
+</div>
+<h2>Under the numbers</h2>
+<p class="sub">Same order as the board. Read this after the figures.</p>
+<div class="notes" id="notes"></div>
+<h2>Food, by type</h2>
+<p class="sub">A blank score means there is no live public feed. It does not mean the risk is zero.</p>
+<div class="stack" id="cats"></div>
+<h2>On the shelf</h2>
+<p class="sub">Public shop pages. Tesco, Asda and Sainsbury's come through Trolley. This is a national catalogue, not the shop on your street.</p>
+<div id="shelf"></div>
+<h2>Where the salad comes from</h2>
+<p class="sub">Rain over the last 45 days, against the same dates in the previous ten years.</p>
+<div class="places" id="places"></div>
+<h2>Price series</h2>
+<p class="sub" id="price-sub">Pump prices are weekly. Futures are daily. These are the lines behind the tiles.</p>
+<div class="series" id="series"></div>
+<details>
+  <summary>How the numbers are made</summary>
+  <ul id="method"></ul>
+</details>
+<p class="disclaimer" id="disclaimer"></p>
+<script>
+function bandOf(score) {
+  if (score == null || Number.isNaN(score)) return "";
+  if (score < 25) return "Calm";
+  if (score < 45) return "Watch";
+  if (score < 65) return "Elevated";
+  if (score < 85) return "Stress";
+  return "Severe";
+}
+
+function fmtDate(iso) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso.slice(0, 10);
+  return new Intl.DateTimeFormat("en-GB", {
+    weekday: "short", day: "numeric", month: "short",
+    hour: "2-digit", minute: "2-digit", timeZone: "Europe/London"
+  }).format(d);
+}
+
+function signed(n, digits) {
+  if (n == null || Number.isNaN(Number(n))) return "—";
+  const v = Number(n);
+  const body = Math.abs(v).toFixed(digits == null ? 0 : digits);
+  return (v > 0 ? "+" : v < 0 ? "−" : "") + body;
+}
+
+function spark(vals, color) {
+  const series = (vals || []).filter(v => v != null && !Number.isNaN(Number(v))).map(Number);
+  if (series.length < 2) return "";
+  const min = Math.min(...series), max = Math.max(...series);
+  const w = 160, h = 28;
+  const pts = series.map((v, i) => {
+    const x = (i / (series.length - 1)) * w;
+    const y = max === min ? h / 2 : h - ((v - min) / (max - min)) * (h - 4) - 2;
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  }).join(" ");
+  return `<svg class="line" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true"><polyline fill="none" stroke="${color || "#f4efe6"}" stroke-width="1.6" points="${pts}"/></svg>`;
+}
+
+function bandColor(band) {
+  return { Calm: "#9aaf86", Watch: "#d4a45a", Elevated: "#e08a45", Stress: "#d85a3a", Severe: "#c4322a" }[band] || "#f4efe6";
+}
+
+function esc(s) {
+  return String(s == null ? "" : s).replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
+}
+
+function closes(market) {
+  return market && market.series ? market.series.map(r => r.close) : [];
+}
+
+function move(kind, label) {
+  const arrow = kind === "worse" ? "↑" : kind === "easing" ? "↓" : "→";
+  return { kind, arrow, label };
+}
+
+function trendFor(name, d) {
+  const pumps = d.pumps || {};
+  const markets = d.markets || {};
+  const harvest = d.harvest || {};
+  const oil = (d.spare_detail && d.spare_detail.oil) || {};
+  const gas = (d.spare_detail && d.spare_detail.gas) || {};
+  const power = (d.spare_detail && d.spare_detail.power) || {};
+  const regions = d.regions || [];
+  if (name === "Pump prices") {
+    const ch = pumps.diesel_4w_pct;
+    const kind = ch > 1 ? "worse" : ch < -1 ? "easing" : "flat";
+    return {
+    move: move(kind, kind === "flat" ? "flat 4 weeks" : `diesel ${signed(ch, 1)}%`),
+    glance: pumps.diesel_percentile != null ? `${Math.round(pumps.diesel_percentile)}th since 2018` : "",
+    series: (pumps.series || []).map(r => r.diesel)
+    };
+  }
+  if (name === "Oil and gas prices") {
+    const ch = markets.ttf && markets.ttf.change_30d_pct;
+    const kind = ch > 3 ? "worse" : ch < -3 ? "easing" : "flat";
+    return {
+    move: move(kind, `gas ${signed(ch)}%`),
+    glance: "30 days",
+    series: closes(markets.ttf)
+    };
+  }
+  if (name === "Wheat price") {
+    const ch = markets.wheat && markets.wheat.change_30d_pct;
+    const kind = ch > 3 ? "worse" : ch < -3 ? "easing" : "flat";
+    return { move: move(kind, `${signed(ch)}%`), glance: "futures, 30 days", series: closes(markets.wheat) };
+  }
+  if (name === "This harvest") {
+    const gap = harvest.wheat_vs_five_year_pct;
+    return { move: move("flat", gap == null ? "" : `${Math.abs(gap)}% under 5yr`), series: [] };
+  }
+  if (name === "Emergency oil stocks") {
+    const yoy = oil.yoy_pct;
+    const kind = yoy < -3 ? "worse" : yoy > 3 ? "easing" : "flat";
+    return { move: move(kind, yoy == null ? "" : `stocks ${signed(yoy)}%`), series: [] };
+  }
+  if (name === "Fuel in the depot") {
+    return { move: move("flat", oil.diesel_days != null ? `${Math.round(oil.diesel_days)} days` : ""), series: [] };
+  }
+  if (name === "Gas in store") {
+    const fill = gas.ranges && gas.ranges.Medium && gas.ranges.Medium.fill_pct;
+    return { move: move("flat", fill == null ? "" : `${fill}% full`), series: [] };
+  }
+  if (name === "Gas day balance") {
+    return {
+      move: move("flat", gas.demand_mcm != null ? `${gas.demand_mcm} vs ${gas.trigger_mcm}` : ""),
+      glance: "",
+      series: []
+    };
+  }
+  if (name === "Power spare") {
+    const days = power.days || [];
+    const tight = power.tight || {};
+    const first = days[0] && days[0].spare_mw;
+    const kind = tight.spare_mw != null && first != null && tight.spare_mw < first * 0.9 ? "worse" : "flat";
+    const when = tight.date ? tight.date.slice(8) + " " + ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][Number(tight.date.slice(5,7)) - 1] : "";
+    return {
+      move: move(kind, tight.spare_mw != null ? `${(tight.spare_mw / 1000).toFixed(1)} GW` : ""),
+      glance: "",
+      series: days.map(r => r.spare_mw)
+    };
+  }
+  if (name === "Import weather") {
+    const dry = regions.filter(r => r.rain_vs_normal_pct != null).sort((a, b) => a.rain_vs_normal_pct - b.rain_vs_normal_pct)[0];
+    if (!dry) return { move: move("flat", ""), series: [] };
+    const kind = dry.rain_vs_normal_pct <= -25 ? "worse" : dry.rain_vs_normal_pct >= 25 ? "easing" : "flat";
+    return { move: move(kind, `${dry.name} ${signed(Math.round(dry.rain_vs_normal_pct))}%`), series: [] };
+  }
+  if (name === "Shelf") return { move: move("flat", ""), series: [] };
+  if (name === "Usual cereal supply" || name === "Usual fresh food") {
+    return { move: move("flat", ""), series: [] };
+  }
+  return { move: move("flat", ""), series: [] };
+}
+
+function render(d) {
+  document.getElementById("when").textContent = d.generated_at ? fmtDate(d.generated_at) : "No data yet";
+  document.getElementById("disclaimer").textContent = d.disclaimer || "";
+  const err = document.getElementById("err");
+  err.innerHTML = (d.errors && d.errors.length)
+    ? `<div class="err">Some feeds failed. Scores use only what came back. ${esc(d.errors.join(" "))}</div>`
+    : "";
+
+  const parts = (d.parts || []).slice().sort((a, b) => (b.score ?? -1) - (a.score ?? -1));
+  document.getElementById("board").innerHTML = parts.map(p => {
+    const t = trendFor(p.name, d);
+    const band = p.band || bandOf(p.score);
+    return `<article class="tile">
+      <button type="button" class="info" aria-label="About ${esc(p.name)}" data-name="${esc(p.name)}" data-score="${p.score == null ? "" : p.score}" data-band="${esc(band)}" data-detail="${esc(p.detail || "")}"><span>i</span></button>
+      <div class="tile-top">
+        <div class="name">${esc(p.name)}</div>
+        ${t.move.label ? `<div class="move ${t.move.kind}">${t.move.arrow} ${esc(t.move.label)}</div>` : ""}
+      </div>
+      <div class="num" data-band="${esc(band)}">${p.score == null ? "—" : p.score}</div>
+      <div class="bandname" data-band="${esc(band)}">${esc(band || "")}</div>
+      ${spark(t.series, bandColor(band))}
+    </article>`;
+  }).join("");
+
+  const blends = [
+    ["Food", d.food || {}],
+    ["Prices", d.fuel || {}],
+    ["Spare", d.spare || {}]
+  ];
+  document.getElementById("blends").innerHTML = blends.map(([label, obj]) => {
+    const band = obj.band || bandOf(obj.score);
+    return `<article class="blend">
+      <div class="kicker">${label}</div>
+      <div class="num" data-band="${esc(band)}">${obj.score == null ? "—" : obj.score}</div>
+      <div class="bandname" data-band="${esc(band)}">${esc(band || "")}</div>
+    </article>`;
+  }).join("");
+
+  document.getElementById("notes").innerHTML = parts.map(p => {
+    const band = p.band || bandOf(p.score);
+    return `<article class="note">
+      <div class="num" data-band="${esc(band)}">${p.score == null ? "—" : p.score}</div>
+      <div>
+        <h3>${esc(p.name)} <span class="bandname" data-band="${esc(band)}">${esc(band || "")}</span></h3>
+      </div>
+      <p>${esc(p.detail || "")}</p>
+    </article>`;
+  }).join("");
+
+  document.getElementById("cats").innerHTML = (d.categories || []).map(c => `<article class="row">
+    <div class="row-top">
+      <h3>${esc(c.name)}</h3>
+      <div class="row-score" data-band="${esc(bandOf(c.score))}">${c.score == null ? "—" : c.score}</div>
+    </div>
+    <div class="stance">${esc(c.stance || "")}</div>
+    <p>${esc(c.note || "")}</p>
+  </article>`).join("");
+
+  document.getElementById("places").innerHTML = (d.regions || []).map(r => {
+    const vs = r.rain_vs_normal_pct;
+    const width = r.normal_rain_mm && r.rain_mm != null
+      ? Math.max(4, Math.min(100, (r.rain_mm / (r.normal_rain_mm * 1.8)) * 100))
+      : 0;
+    const vsTxt = vs == null ? "no comparison" : `${vs > 0 ? "+" : ""}${Math.round(vs)}% vs usual`;
+    const heat = r.temp_percentile >= 85 ? " · heat in the top of the local record" : "";
+    return `<div class="place">
+      <strong>${esc(r.name)}</strong>
+      <div class="role">${esc(r.role || "")}</div>
+      <div class="bar"><span style="width:${width}%"></span></div>
+      <div class="meta">${r.rain_mm == null ? "—" : r.rain_mm + " mm"} · ${esc(vsTxt + heat)}</div>
+    </div>`;
+  }).join("");
+
+  const pumps = d.pumps || {};
+  const latest = pumps.latest || {};
+  const markets = d.markets || {};
+  const cards = [
+    { label: "Petrol", px: latest.petrol != null ? latest.petrol.toFixed(1) + "p" : "—", sub: latest.date ? "week of " + latest.date : "", svg: spark((pumps.series || []).map(r => r.petrol)) },
+    { label: "Diesel", px: latest.diesel != null ? latest.diesel.toFixed(1) + "p" : "—", sub: pumps.diesel_percentile != null ? pumps.diesel_percentile + "th percentile since 2018" : "", svg: spark((pumps.series || []).map(r => r.diesel)) },
+    { label: "Brent", px: markets.brent ? "$" + markets.brent.price : "—", sub: markets.brent ? signed(markets.brent.change_30d_pct) + "% in 30 days" : "", svg: spark(closes(markets.brent)) },
+    { label: "Dutch gas", px: markets.ttf ? "€" + markets.ttf.price : "—", sub: markets.ttf ? signed(markets.ttf.change_30d_pct) + "% in 30 days" : "", svg: spark(closes(markets.ttf)) },
+    { label: "Wheat", px: markets.wheat ? markets.wheat.price : "—", sub: markets.wheat ? "US cents / bushel · " + signed(markets.wheat.change_30d_pct) + "% in 30 days" : "", svg: spark(closes(markets.wheat)) },
+  ];
+  document.getElementById("series").innerHTML = cards.map(c => `<div class="spark">
+    <div class="lbl">${esc(c.label)}</div>
+    <div class="px">${esc(c.px)}</div>
+    <div class="lbl">${esc(c.sub)}</div>
+    ${c.svg}
+  </div>`).join("");
+
+  document.getElementById("method").innerHTML = (d.method || []).map(m => `<li>${esc(m)}</li>`).join("");
+  renderShelf(d.shelf);
+}
+
+function scoreCell(score) {
+  if (score == null) return `<td class="score">—</td>`;
+  const b = bandOf(score);
+  return `<td class="score" data-band="${b}">${score}</td>`;
+}
+
+function money(n) {
+  return n == null ? "" : "£" + Number(n).toFixed(2);
+}
+
+function rowCard(name, stance, score, note) {
+  return `<article class="row">
+    <div class="row-top">
+      <h3>${esc(name)}</h3>
+      <div class="row-score">${score == null || score === "" ? "—" : esc(score)}</div>
+    </div>
+    <div class="stance">${esc(stance || "")}</div>
+    ${note ? `<p>${esc(note)}</p>` : ""}
+  </article>`;
+}
+
+function renderShelf(shelf) {
+  const el = document.getElementById("shelf");
+  if (!shelf) {
+    el.innerHTML = "<p class='sub'>No shelf read yet.</p>";
+    return;
+  }
+  const rows = [];
+  for (const s of shelf.staples || []) {
+    const shops = s.retailers || [];
+    const cheapest = shops[0];
+    const listed = shops.map(r => `${r.name} ${money(r.price)}`).join(", ");
+    rows.push(rowCard(s.item, `${shops.length} shops priced`, cheapest ? money(cheapest.price) : "—", `${s.product}. ${listed}`));
+  }
+  for (const r of shelf.retailers || []) {
+    if (r.blocked) {
+      rows.push(rowCard(`Eggs · ${r.retailer}`, "Check blocked", "—", r.error || "Not counted as empty."));
+      continue;
+    }
+    const cheap = r.cheapest_6 || r.cheapest;
+    const state = r.listed ? `${r.available}/${r.listed} shell eggs buyable` : (r.error || "no list");
+    rows.push(rowCard(`Eggs · ${r.retailer}`, state, cheap ? money(cheap.price) : "—", cheap ? cheap.name : ""));
+  }
+  el.innerHTML = `<div class="stack">${rows.join("")}</div>`;
+}
+
+fetch("/api/latest", { cache: "no-store" })
+  .then(r => r.ok ? r.json() : Promise.reject())
+  .catch(() => fetch("latest.json", { cache: "no-store" }).then(r => {
+    if (!r.ok) throw new Error("Could not load data");
+    return r.json();
+  }))
+  .then(render)
+  .catch(err => {
+    document.getElementById("when").textContent = "Could not load data";
+    document.getElementById("err").innerHTML = `<div class="err">${esc(err)}</div>`;
+  });
+
+const sheet = document.getElementById("sheet");
+function closeSheet() {
+  sheet.hidden = true;
+}
+function openSheet(btn) {
+  const score = btn.dataset.score;
+  const band = btn.dataset.band || "";
+  document.getElementById("sheet-title").textContent = `${btn.dataset.name} ${score || "—"}${band ? " · " + band : ""}`;
+  document.getElementById("sheet-body").textContent = btn.dataset.detail || "No note on this one.";
+  sheet.hidden = false;
+  document.getElementById("sheet-close").focus();
+}
+document.getElementById("board").addEventListener("click", (e) => {
+  const btn = e.target.closest(".info");
+  if (!btn) return;
+  openSheet(btn);
+});
+document.getElementById("sheet-close").addEventListener("click", closeSheet);
+sheet.addEventListener("click", (e) => {
+  if (e.target === sheet) closeSheet();
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && !sheet.hidden) closeSheet();
+});
+</script>
+</body>
+</html>
