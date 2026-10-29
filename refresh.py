@@ -9,9 +9,10 @@ from __future__ import annotations
 
 import json
 import statistics
-import urllib.request
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
+
+from http_fetch import fetch_bytes
 
 ROOT = Path(__file__).resolve().parent
 OUT = ROOT / "data" / "latest.json"
@@ -36,10 +37,15 @@ TICKERS = {
 }
 
 
+HOSTS = {
+    "assets.publishing.service.gov.uk",
+    "query1.finance.yahoo.com",
+    "archive-api.open-meteo.com",
+}
+
+
 def fetch(url: str, timeout: int = 40) -> bytes:
-    req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": "*/*"})
-    with urllib.request.urlopen(req, timeout=timeout) as resp:
-        return resp.read()
+    return fetch_bytes(url, allow_hosts=HOSTS, timeout=timeout, max_bytes=8_000_000, headers={"User-Agent": UA, "Accept": "*/*"})
 
 
 def yahoo(symbol: str, range_: str = "2y") -> dict:

@@ -2,6 +2,7 @@ __pycache__/
 *.pyc
 .DS_Store
 data/*.xlsx
+data/latest.json
 data/phone-url.txt
 data/preview.png
 web/index.v1.html

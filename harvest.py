@@ -4,7 +4,8 @@
 from __future__ import annotations
 
 import re
-import urllib.request
+
+from http_fetch import fetch_bytes
 
 UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
 
@@ -24,10 +25,17 @@ FALLBACK = {
 }
 
 
+HOSTS = {"ahdb.org.uk", "www.gov.uk"}
+
+
 def fetch(url: str) -> str:
-    req = urllib.request.Request(url, headers={"User-Agent": UA})
-    with urllib.request.urlopen(req, timeout=30) as resp:
-        return resp.read().decode("utf-8", errors="replace")
+    return fetch_bytes(
+        url,
+        allow_hosts=HOSTS,
+        timeout=30,
+        max_bytes=3_000_000,
+        headers={"User-Agent": UA},
+    ).decode("utf-8", "replace")
 
 
 def deficit_score(pct_below: float) -> int:

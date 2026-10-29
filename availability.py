@@ -10,8 +10,9 @@ from __future__ import annotations
 
 import json
 import re
-import urllib.request
 from urllib.parse import quote
+
+from http_fetch import fetch_bytes
 
 UA = (
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
@@ -25,10 +26,17 @@ NOT_SHELL = (
 )
 
 
+HOSTS = {"www.ocado.com", "groceries.morrisons.com", "www.trolley.co.uk"}
+
+
 def fetch(url: str, timeout: int = 30) -> str:
-    req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": "text/html"})
-    with urllib.request.urlopen(req, timeout=timeout) as resp:
-        return resp.read().decode("utf-8", errors="replace")
+    return fetch_bytes(
+        url,
+        allow_hosts=HOSTS,
+        timeout=timeout,
+        max_bytes=5_000_000,
+        headers={"User-Agent": UA, "Accept": "text/html"},
+    ).decode("utf-8", "replace")
 
 
 def is_shell_egg(name: str) -> bool:

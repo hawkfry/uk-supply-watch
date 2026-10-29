@@ -14,7 +14,7 @@ class Handler(SimpleHTTPRequestHandler):
         super().__init__(*args, directory=str(WEB), **kwargs)
 
     def do_GET(self):
-        if self.path.startswith("/api/latest"):
+        if self.path.split("?", 1)[0] in ("/latest.json", "/api/latest"):
             body = DATA.read_bytes() if DATA.exists() else b"{}"
             self.send_response(200)
             self.send_header("Content-Type", "application/json")

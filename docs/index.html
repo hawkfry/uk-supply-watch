@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-7nZtHCmVoDMSfFJnrohDRE8qA8hS+ml7yQTYTdW8oRI='; style-src 'unsafe-inline'; connect-src 'self'; img-src 'self'; base-uri 'none'; object-src 'none'">
 <title>UK supply watch</title>
 <style>
   :root {
@@ -361,7 +362,7 @@
 <p class="disclaimer" id="disclaimer"></p>
 <script>
 function bandOf(score) {
-  if (score == null || Number.isNaN(score)) return "";
+  if (typeof score !== "number" || !Number.isFinite(score)) return "";
   if (score < 25) return "Calm";
   if (score < 45) return "Watch";
   if (score < 65) return "Elevated";
@@ -379,16 +380,26 @@ function fmtDate(iso) {
   }).format(d);
 }
 
+function finite(value) {
+  return typeof value === "number" && Number.isFinite(value) ? value : null;
+}
+
+function showNum(value) {
+  const n = finite(value);
+  return n == null ? "—" : String(n);
+}
+
 function signed(n, digits) {
-  if (n == null || Number.isNaN(Number(n))) return "—";
-  const v = Number(n);
+  const v = finite(n);
+  if (v == null) return "—";
   const body = Math.abs(v).toFixed(digits == null ? 0 : digits);
   return (v > 0 ? "+" : v < 0 ? "−" : "") + body;
 }
 
 function spark(vals, color) {
-  const series = (vals || []).filter(v => v != null && !Number.isNaN(Number(v))).map(Number);
+  const series = (vals || []).map(finite).filter(v => v != null);
   if (series.length < 2) return "";
+  const stroke = /^#[0-9a-fA-F]{6}$/.test(color) ? color : "#f4efe6";
   const min = Math.min(...series), max = Math.max(...series);
   const w = 160, h = 28;
   const pts = series.map((v, i) => {
@@ -396,7 +407,7 @@ function spark(vals, color) {
     const y = max === min ? h / 2 : h - ((v - min) / (max - min)) * (h - 4) - 2;
     return `${x.toFixed(1)},${y.toFixed(1)}`;
   }).join(" ");
-  return `<svg class="line" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true"><polyline fill="none" stroke="${color || "#f4efe6"}" stroke-width="1.6" points="${pts}"/></svg>`;
+  return `<svg class="line" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true"><polyline fill="none" stroke="${stroke}" stroke-width="1.6" points="${pts}"/></svg>`;
 }
 
 function bandColor(band) {
@@ -408,7 +419,7 @@ function esc(s) {
 }
 
 function closes(market) {
-  return market && market.series ? market.series.map(r => r.close) : [];
+  return market && market.series ? market.series.map(r => finite(r.close)).filter(v => v != null) : [];
 }
 
 function move(kind, label) {
@@ -430,7 +441,7 @@ function trendFor(name, d) {
     return {
     move: move(kind, kind === "flat" ? "flat 4 weeks" : `diesel ${signed(ch, 1)}%`),
     glance: pumps.diesel_percentile != null ? `${Math.round(pumps.diesel_percentile)}th since 2018` : "",
-    series: (pumps.series || []).map(r => r.diesel)
+    series: (pumps.series || []).map(r => finite(r.diesel))
     };
   }
   if (name === "Oil and gas prices") {
@@ -448,7 +459,7 @@ function trendFor(name, d) {
     return { move: move(kind, `${signed(ch)}%`), glance: "futures, 30 days", series: closes(markets.wheat) };
   }
   if (name === "This harvest") {
-    const gap = harvest.wheat_vs_five_year_pct;
+    const gap = finite(harvest.wheat_vs_five_year_pct);
     return { move: move("flat", gap == null ? "" : `${Math.abs(gap)}% under 5yr`), series: [] };
   }
   if (name === "Emergency oil stocks") {
@@ -457,15 +468,18 @@ function trendFor(name, d) {
     return { move: move(kind, yoy == null ? "" : `stocks ${signed(yoy)}%`), series: [] };
   }
   if (name === "Fuel in the depot") {
-    return { move: move("flat", oil.diesel_days != null ? `${Math.round(oil.diesel_days)} days` : ""), series: [] };
+    const daysCover = finite(oil.diesel_days);
+    return { move: move("flat", daysCover == null ? "" : `${Math.round(daysCover)} days`), series: [] };
   }
   if (name === "Gas in store") {
-    const fill = gas.ranges && gas.ranges.Medium && gas.ranges.Medium.fill_pct;
+    const fill = finite(gas.ranges && gas.ranges.Medium && gas.ranges.Medium.fill_pct);
     return { move: move("flat", fill == null ? "" : `${fill}% full`), series: [] };
   }
   if (name === "Gas day balance") {
+    const demand = finite(gas.demand_mcm);
+    const trigger = finite(gas.trigger_mcm);
     return {
-      move: move("flat", gas.demand_mcm != null ? `${gas.demand_mcm} vs ${gas.trigger_mcm}` : ""),
+      move: move("flat", demand == null || trigger == null ? "" : `${demand} vs ${trigger}`),
       glance: "",
       series: []
     };
@@ -473,20 +487,22 @@ function trendFor(name, d) {
   if (name === "Power spare") {
     const days = power.days || [];
     const tight = power.tight || {};
-    const first = days[0] && days[0].spare_mw;
-    const kind = tight.spare_mw != null && first != null && tight.spare_mw < first * 0.9 ? "worse" : "flat";
-    const when = tight.date ? tight.date.slice(8) + " " + ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][Number(tight.date.slice(5,7)) - 1] : "";
+    const spareMw = finite(tight.spare_mw);
+    const first = finite(days[0] && days[0].spare_mw);
+    const kind = spareMw != null && first != null && spareMw < first * 0.9 ? "worse" : "flat";
+    const when = /^\d{4}-\d{2}-\d{2}$/.test(tight.date || "") ? tight.date.slice(8) + " " + ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][Number(tight.date.slice(5,7)) - 1] : "";
     return {
-      move: move(kind, tight.spare_mw != null ? `${(tight.spare_mw / 1000).toFixed(1)} GW` : ""),
+      move: move(kind, spareMw == null ? "" : `${(spareMw / 1000).toFixed(1)} GW`),
       glance: "",
-      series: days.map(r => r.spare_mw)
+      series: days.map(r => finite(r.spare_mw))
     };
   }
   if (name === "Import weather") {
-    const dry = regions.filter(r => r.rain_vs_normal_pct != null).sort((a, b) => a.rain_vs_normal_pct - b.rain_vs_normal_pct)[0];
+    const dry = regions.filter(r => finite(r.rain_vs_normal_pct) != null).sort((a, b) => a.rain_vs_normal_pct - b.rain_vs_normal_pct)[0];
     if (!dry) return { move: move("flat", ""), series: [] };
-    const kind = dry.rain_vs_normal_pct <= -25 ? "worse" : dry.rain_vs_normal_pct >= 25 ? "easing" : "flat";
-    return { move: move(kind, `${dry.name} ${signed(Math.round(dry.rain_vs_normal_pct))}%`), series: [] };
+    const rainPct = finite(dry.rain_vs_normal_pct);
+    const kind = rainPct <= -25 ? "worse" : rainPct >= 25 ? "easing" : "flat";
+    return { move: move(kind, `${dry.name} ${signed(rainPct)}%`), series: [] };
   }
   if (name === "Shelf") return { move: move("flat", ""), series: [] };
   if (name === "Usual cereal supply" || name === "Usual fresh food") {
@@ -507,13 +523,14 @@ function render(d) {
   document.getElementById("board").innerHTML = parts.map(p => {
     const t = trendFor(p.name, d);
     const band = p.band || bandOf(p.score);
+    const scoreText = showNum(p.score);
     return `<article class="tile">
-      <button type="button" class="info" aria-label="About ${esc(p.name)}" data-name="${esc(p.name)}" data-score="${p.score == null ? "" : p.score}" data-band="${esc(band)}" data-detail="${esc(p.detail || "")}"><span>i</span></button>
+      <button type="button" class="info" aria-label="About ${esc(p.name)}" data-name="${esc(p.name)}" data-score="${esc(scoreText)}" data-band="${esc(band)}" data-detail="${esc(p.detail || "")}"><span>i</span></button>
       <div class="tile-top">
         <div class="name">${esc(p.name)}</div>
         ${t.move.label ? `<div class="move ${t.move.kind}">${t.move.arrow} ${esc(t.move.label)}</div>` : ""}
       </div>
-      <div class="num" data-band="${esc(band)}">${p.score == null ? "—" : p.score}</div>
+      <div class="num" data-band="${esc(band)}">${esc(scoreText)}</div>
       <div class="bandname" data-band="${esc(band)}">${esc(band || "")}</div>
       ${spark(t.series, bandColor(band))}
     </article>`;
@@ -526,17 +543,19 @@ function render(d) {
   ];
   document.getElementById("blends").innerHTML = blends.map(([label, obj]) => {
     const band = obj.band || bandOf(obj.score);
+    const scoreText = showNum(obj.score);
     return `<article class="blend">
       <div class="kicker">${label}</div>
-      <div class="num" data-band="${esc(band)}">${obj.score == null ? "—" : obj.score}</div>
+      <div class="num" data-band="${esc(band)}">${esc(scoreText)}</div>
       <div class="bandname" data-band="${esc(band)}">${esc(band || "")}</div>
     </article>`;
   }).join("");
 
   document.getElementById("notes").innerHTML = parts.map(p => {
     const band = p.band || bandOf(p.score);
+    const scoreText = showNum(p.score);
     return `<article class="note">
-      <div class="num" data-band="${esc(band)}">${p.score == null ? "—" : p.score}</div>
+      <div class="num" data-band="${esc(band)}">${esc(scoreText)}</div>
       <div>
         <h3>${esc(p.name)} <span class="bandname" data-band="${esc(band)}">${esc(band || "")}</span></h3>
       </div>
@@ -547,36 +566,46 @@ function render(d) {
   document.getElementById("cats").innerHTML = (d.categories || []).map(c => `<article class="row">
     <div class="row-top">
       <h3>${esc(c.name)}</h3>
-      <div class="row-score" data-band="${esc(bandOf(c.score))}">${c.score == null ? "—" : c.score}</div>
+      <div class="row-score" data-band="${esc(bandOf(finite(c.score)))}">${esc(showNum(c.score))}</div>
     </div>
     <div class="stance">${esc(c.stance || "")}</div>
     <p>${esc(c.note || "")}</p>
   </article>`).join("");
 
   document.getElementById("places").innerHTML = (d.regions || []).map(r => {
-    const vs = r.rain_vs_normal_pct;
-    const width = r.normal_rain_mm && r.rain_mm != null
-      ? Math.max(4, Math.min(100, (r.rain_mm / (r.normal_rain_mm * 1.8)) * 100))
-      : 0;
+    const rain = finite(r.rain_mm);
+    const normal = finite(r.normal_rain_mm);
+    const vs = finite(r.rain_vs_normal_pct);
+    let width = 0;
+    if (rain != null && normal != null && normal !== 0) {
+      const raw = (rain / (normal * 1.8)) * 100;
+      if (Number.isFinite(raw)) width = Math.max(4, Math.min(100, raw));
+    }
     const vsTxt = vs == null ? "no comparison" : `${vs > 0 ? "+" : ""}${Math.round(vs)}% vs usual`;
-    const heat = r.temp_percentile >= 85 ? " · heat in the top of the local record" : "";
+    const heatPct = finite(r.temp_percentile);
+    const heat = heatPct != null && heatPct >= 85 ? " · heat in the top of the local record" : "";
     return `<div class="place">
       <strong>${esc(r.name)}</strong>
       <div class="role">${esc(r.role || "")}</div>
-      <div class="bar"><span style="width:${width}%"></span></div>
-      <div class="meta">${r.rain_mm == null ? "—" : r.rain_mm + " mm"} · ${esc(vsTxt + heat)}</div>
+      <div class="bar"><span style="width:${width.toFixed(1)}%"></span></div>
+      <div class="meta">${rain == null ? "—" : rain + " mm"} · ${esc(vsTxt + heat)}</div>
     </div>`;
   }).join("");
 
   const pumps = d.pumps || {};
   const latest = pumps.latest || {};
   const markets = d.markets || {};
+  const petrol = finite(latest.petrol);
+  const diesel = finite(latest.diesel);
+  const brent = markets.brent ? finite(markets.brent.price) : null;
+  const ttf = markets.ttf ? finite(markets.ttf.price) : null;
+  const wheat = markets.wheat ? finite(markets.wheat.price) : null;
   const cards = [
-    { label: "Petrol", px: latest.petrol != null ? latest.petrol.toFixed(1) + "p" : "—", sub: latest.date ? "week of " + latest.date : "", svg: spark((pumps.series || []).map(r => r.petrol)) },
-    { label: "Diesel", px: latest.diesel != null ? latest.diesel.toFixed(1) + "p" : "—", sub: pumps.diesel_percentile != null ? pumps.diesel_percentile + "th percentile since 2018" : "", svg: spark((pumps.series || []).map(r => r.diesel)) },
-    { label: "Brent", px: markets.brent ? "$" + markets.brent.price : "—", sub: markets.brent ? signed(markets.brent.change_30d_pct) + "% in 30 days" : "", svg: spark(closes(markets.brent)) },
-    { label: "Dutch gas", px: markets.ttf ? "€" + markets.ttf.price : "—", sub: markets.ttf ? signed(markets.ttf.change_30d_pct) + "% in 30 days" : "", svg: spark(closes(markets.ttf)) },
-    { label: "Wheat", px: markets.wheat ? markets.wheat.price : "—", sub: markets.wheat ? "US cents / bushel · " + signed(markets.wheat.change_30d_pct) + "% in 30 days" : "", svg: spark(closes(markets.wheat)) },
+    { label: "Petrol", px: petrol == null ? "—" : petrol.toFixed(1) + "p", sub: latest.date ? "week of " + latest.date : "", svg: spark((pumps.series || []).map(r => finite(r.petrol))) },
+    { label: "Diesel", px: diesel == null ? "—" : diesel.toFixed(1) + "p", sub: finite(pumps.diesel_percentile) != null ? finite(pumps.diesel_percentile) + "th percentile since 2018" : "", svg: spark((pumps.series || []).map(r => finite(r.diesel))) },
+    { label: "Brent", px: brent == null ? "—" : "$" + brent, sub: markets.brent ? signed(markets.brent.change_30d_pct) + "% in 30 days" : "", svg: spark(closes(markets.brent)) },
+    { label: "Dutch gas", px: ttf == null ? "—" : "€" + ttf, sub: markets.ttf ? signed(markets.ttf.change_30d_pct) + "% in 30 days" : "", svg: spark(closes(markets.ttf)) },
+    { label: "Wheat", px: wheat == null ? "—" : String(wheat), sub: markets.wheat ? "US cents / bushel · " + signed(markets.wheat.change_30d_pct) + "% in 30 days" : "", svg: spark(closes(markets.wheat)) },
   ];
   document.getElementById("series").innerHTML = cards.map(c => `<div class="spark">
     <div class="lbl">${esc(c.label)}</div>
@@ -596,7 +625,8 @@ function scoreCell(score) {
 }
 
 function money(n) {
-  return n == null ? "" : "£" + Number(n).toFixed(2);
+  const v = finite(n);
+  return v == null ? "" : "£" + v.toFixed(2);
 }
 
 function rowCard(name, stance, score, note) {
@@ -635,14 +665,10 @@ function renderShelf(shelf) {
   el.innerHTML = `<div class="stack">${rows.join("")}</div>`;
 }
 
-fetch("/api/latest", { cache: "no-store" })
-  .then(r => r.ok ? r.json() : Promise.reject())
-  .catch(() => fetch("latest.json", { cache: "no-store" }).then(r => {
-    if (!r.ok) throw new Error("Could not load data");
-    return r.json();
-  }))
-  .then(render)
-  .catch(err => {
+fetch("latest.json", { cache: "no-store" }).then(r => {
+  if (!r.ok) throw new Error("Could not load data");
+  return r.json();
+}).then(render).catch(err => {
     document.getElementById("when").textContent = "Could not load data";
     document.getElementById("err").innerHTML = `<div class="err">${esc(err)}</div>`;
   });

@@ -5,23 +5,28 @@ from __future__ import annotations
 
 import json
 import re
-import urllib.request
-import zipfile
 from datetime import date, timedelta
-from io import BytesIO
-from xml.etree import ElementTree as ET
+
+from http_fetch import fetch_bytes
+from safe_zip import open_xlsx, parse_xml, read_member
 
 UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"
 NS = {"m": "http://schemas.openxmlformats.org/spreadsheetml/2006/main"}
+
+
+HOSTS = {
+    "www.gov.uk",
+    "assets.publishing.service.gov.uk",
+    "data.nationalgas.com",
+    "data.elexon.co.uk",
+}
 
 
 def fetch(url: str, data: bytes | None = None, headers: dict | None = None) -> bytes:
     hdrs = {"User-Agent": UA, "Accept": "application/json, */*"}
     if headers:
         hdrs.update(headers)
-    req = urllib.request.Request(url, data=data, headers=hdrs)
-    with urllib.request.urlopen(req, timeout=40) as resp:
-        return resp.read()
+    return fetch_bytes(url, allow_hosts=HOSTS, timeout=40, max_bytes=8_000_000, data=data, headers=hdrs)
 
 
 def band(score: int | None) -> str | None:
@@ -80,13 +85,13 @@ def gas_day_score(demand_mcm: float, trigger_mcm: float) -> int:
 
 
 def _xlsx_rows(blob: bytes, sheet: str) -> list[dict]:
-    z = zipfile.ZipFile(BytesIO(blob))
+    z = open_xlsx(blob)
     ss = []
     if "xl/sharedStrings.xml" in z.namelist():
-        root = ET.fromstring(z.read("xl/sharedStrings.xml"))
+        root = parse_xml(read_member(z, "xl/sharedStrings.xml"))
         for si in root.findall("m:si", NS):
             ss.append("".join(t.text or "" for t in si.findall(".//m:t", NS)))
-    root = ET.fromstring(z.read(sheet))
+    root = parse_xml(read_member(z, sheet))
     rows = []
     for row in root.findall("m:sheetData/m:row", NS):
         cells = {}

@@ -6,7 +6,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-ROOT = Path("/Users/jamiefry/uk-supply-watch")
+ROOT = Path(__file__).resolve().parent
 DATA = ROOT / "data" / "latest.json"
 
 
