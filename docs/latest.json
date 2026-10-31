@@ -1,20 +1,20 @@
 {
-  "generated_at": "2026-10-29T08:49:03.358424+00:00",
-  "as_of": "2026-10-29",
+  "generated_at": "2026-10-31T11:38:33.649117+00:00",
+  "as_of": "2026-10-31",
   "disclaimer": "A watch index for UK type shortages and fuel stress. Individual scores come first. The overall is a blend and does not cancel a bad harvest. It does not see supermarket shelves, and it is not a prediction that a shop will be empty.",
   "food": {
-    "score": 47,
+    "score": 48,
     "band": "Elevated",
-    "why": "this harvest is the loud food score: wheat yields 11% below the five-year average after a dry spring and summer. Agadir is drier than its usual autumn. wheat futures are down 14% in 30 days. the overall does not cancel that. Shelves can still be stocked while the crop was short.",
+    "why": "this harvest is the loud food score: wheat yields 11% below the five-year average after a dry spring and summer. Agadir is drier than its usual autumn. wheat futures are down 11% in 30 days. the overall does not cancel that. Shelves can still be stocked while the crop was short.",
     "parts": [
       {
         "name": "import-belt weather",
-        "score": 43,
+        "score": 47,
         "weight": 0.2
       },
       {
         "name": "wheat price",
-        "score": 47,
+        "score": 48,
         "weight": 0.15
       },
       {
@@ -45,14 +45,14 @@
     ]
   },
   "fuel": {
-    "score": 92,
+    "score": 94,
     "band": "Severe",
-    "why": "diesel is 199p and petrol 174p, week of 2026-10-26. diesel is at the 99th percentile of pump prices since 2018. Brent is $111, +8% in 30 days. Dutch gas is 97, +39% in 30 days. Stocks and spare capacity are scored separately and do not cancel this."
+    "why": "diesel is 199p and petrol 174p, week of 2026-10-26. diesel is at the 99th percentile of pump prices since 2018. Brent is $118, +14% in 30 days. Dutch gas is 104, +44% in 30 days. Stocks and spare capacity are scored separately and do not cancel this."
   },
   "spare": {
-    "score": 41,
+    "score": 39,
     "band": "Watch",
-    "why": "white diesel in the depot covers about 17 days of the latest month's deliveries. the tightest power day still has 6.6 GW spare. these scores are not the pump price, and a calm spare reading does not make diesel cheap."
+    "why": "white diesel in the depot covers about 21 days of the latest month's deliveries. the tightest power day still has 7.1 GW spare. these scores are not the pump price, and a calm spare reading does not make diesel cheap."
   },
   "pumps": {
     "latest": {
@@ -595,15 +595,14 @@
       "name": "Brent Crude Oil Last Day Financ",
       "symbol": "BZ=F",
       "currency": "USD",
-      "price": 110.68,
-      "as_of": "2026-10-29",
-      "change_30d_pct": 7.9,
-      "percentile_2y": 97.0,
+      "price": 117.64,
+      "as_of": "2026-10-30",
+      "change_30d_pct": 13.6,
+      "percentile_2y": 99.6,
+      "curve_pct": -3.6,
+      "curve_label": "front 3.6% dearer",
+      "curve_as_of": "2026-10-30",
       "series": [
-        {
-          "date": "2026-05-11",
-          "close": 104.21
-        },
         {
           "date": "2026-05-12",
           "close": 107.77
@@ -1078,7 +1077,11 @@
         },
         {
           "date": "2026-10-29",
-          "close": 110.68
+          "close": 114.88
+        },
+        {
+          "date": "2026-10-30",
+          "close": 117.64
         }
       ]
     },
@@ -1086,15 +1089,14 @@
       "name": "Dutch TTF Natural Gas Calendar ",
       "symbol": "TTF=F",
       "currency": "EUR",
-      "price": 96.99,
-      "as_of": "2026-10-29",
-      "change_30d_pct": 38.9,
-      "percentile_2y": 99.8,
+      "price": 103.94,
+      "as_of": "2026-10-30",
+      "change_30d_pct": 43.6,
+      "percentile_2y": 100.0,
+      "curve_pct": null,
+      "curve_label": "",
+      "curve_as_of": null,
       "series": [
-        {
-          "date": "2026-05-11",
-          "close": 46.23
-        },
         {
           "date": "2026-05-12",
           "close": 46.68
@@ -1569,7 +1571,11 @@
         },
         {
           "date": "2026-10-29",
-          "close": 96.99
+          "close": 98.59
+        },
+        {
+          "date": "2026-10-30",
+          "close": 103.94
         }
       ]
     },
@@ -1577,15 +1583,14 @@
       "name": "Chicago SRW Wheat Futures,Dec-2",
       "symbol": "ZW=F",
       "currency": "USX",
-      "price": 599.25,
-      "as_of": "2026-10-29",
-      "change_30d_pct": -13.5,
-      "percentile_2y": 75.7,
+      "price": 603.5,
+      "as_of": "2026-10-30",
+      "change_30d_pct": -10.7,
+      "percentile_2y": 76.3,
+      "curve_pct": 2.2,
+      "curve_label": "front 2.2% cheaper",
+      "curve_as_of": "2026-10-30",
       "series": [
-        {
-          "date": "2026-05-11",
-          "close": 622.25
-        },
         {
           "date": "2026-05-12",
           "close": 665.0
@@ -2060,7 +2065,11 @@
         },
         {
           "date": "2026-10-29",
-          "close": 599.25
+          "close": 603.75
+        },
+        {
+          "date": "2026-10-30",
+          "close": 603.5
         }
       ]
     }
@@ -2070,51 +2079,51 @@
       "id": "almeria",
       "name": "Almer\u00eda",
       "role": "Spanish salad and tomatoes",
-      "window": "2026-09-13 to 2026-10-27",
+      "window": "2026-09-15 to 2026-10-29",
       "rain_mm": 56.4,
-      "normal_rain_mm": 20.9,
-      "rain_vs_normal_pct": 171.0,
-      "dryness_percentile": 10.0,
-      "temp_c": 22.6,
+      "normal_rain_mm": 22.0,
+      "rain_vs_normal_pct": 157.0,
+      "dryness_percentile": 20.0,
+      "temp_c": 22.4,
       "temp_percentile": 60.0,
-      "stress": 10
+      "stress": 20
     },
     {
       "id": "agadir",
       "name": "Agadir",
       "role": "Moroccan tomatoes",
-      "window": "2026-09-13 to 2026-10-27",
-      "rain_mm": 9.5,
-      "normal_rain_mm": 16.5,
-      "rain_vs_normal_pct": -42.0,
+      "window": "2026-09-15 to 2026-10-29",
+      "rain_mm": 9.4,
+      "normal_rain_mm": 16.4,
+      "rain_vs_normal_pct": -43.0,
       "dryness_percentile": 60.0,
-      "temp_c": 23.6,
-      "temp_percentile": 90.0,
-      "stress": 68
+      "temp_c": 23.2,
+      "temp_percentile": 80.0,
+      "stress": 60
     },
     {
       "id": "westland",
       "name": "Westland",
       "role": "Dutch glasshouses",
-      "window": "2026-09-13 to 2026-10-27",
-      "rain_mm": 163.8,
-      "normal_rain_mm": 145.2,
-      "rain_vs_normal_pct": 13.0,
-      "dryness_percentile": 40.0,
-      "temp_c": 14.6,
+      "window": "2026-09-15 to 2026-10-29",
+      "rain_mm": 153.4,
+      "normal_rain_mm": 144.9,
+      "rain_vs_normal_pct": 6.0,
+      "dryness_percentile": 50.0,
+      "temp_c": 14.3,
       "temp_percentile": 90.0,
-      "stress": 52
+      "stress": 60
     },
     {
       "id": "anglia",
       "name": "East Anglia",
       "role": "UK wheat and field veg",
-      "window": "2026-09-13 to 2026-10-27",
-      "rain_mm": 95.3,
-      "normal_rain_mm": 98.7,
-      "rain_vs_normal_pct": -3.0,
+      "window": "2026-09-15 to 2026-10-29",
+      "rain_mm": 83.9,
+      "normal_rain_mm": 93.4,
+      "rain_vs_normal_pct": -10.0,
       "dryness_percentile": 50.0,
-      "temp_c": 14.3,
+      "temp_c": 13.9,
       "temp_percentile": 90.0,
       "stress": 60
     }
@@ -2146,57 +2155,65 @@
     },
     {
       "name": "Import weather",
-      "score": 43,
-      "band": "Watch",
+      "score": 47,
+      "band": "Elevated",
       "detail": "Last 45 days of rain in Almer\u00eda, Agadir and Westland versus the same dates in the previous ten years."
     },
     {
       "name": "Wheat price",
-      "score": 47,
+      "score": 48,
       "band": "Elevated",
-      "detail": "Chicago wheat futures versus their own two-year range. A falling price can sit next to a short crop."
+      "detail": "Chicago wheat futures versus their own two-year range. A falling price can sit next to a short crop. Wheat: front 2.2% cheaper, settle 2026-10-30. Nearby tightness is not folded into the price score."
     },
     {
       "name": "Pump prices",
       "score": 90,
       "band": "Severe",
-      "detail": "diesel is 199p and petrol 174p, week of 2026-10-26. diesel is at the 99th percentile of pump prices since 2018. Brent is $111, +8% in 30 days. Dutch gas is 97, +39% in 30 days."
+      "detail": "diesel is 199p and petrol 174p, week of 2026-10-26. diesel is at the 99th percentile of pump prices since 2018. Brent is $118, +14% in 30 days. Dutch gas is 104, +44% in 30 days."
     },
     {
       "name": "Oil and gas prices",
-      "score": 94,
+      "score": 98,
       "band": "Severe",
-      "detail": "Brent and Dutch gas, each versus their own two-year range, then averaged. Price is not stock."
+      "detail": "Brent and Dutch gas, each versus their own two-year range, then averaged. Price is not stock. Brent: front 3.6% dearer, settle 2026-10-30. Nearby tightness is not folded into the price score."
     },
     {
       "name": "Emergency oil stocks",
-      "score": 38,
-      "band": "Watch",
-      "detail": "DESNZ stocks at end of July 2026 [provisional]: 9.6 million tonnes in total, 8.7 million tonnes physically in the UK. That is -10% on the same month a year earlier. Against the last ten years of months, this total sits around the 17th percentile. The last quarterly note said end-June stocks still more than met the IEA 90-day net-import rule. That rule is not the same as fuel in the depot. July deliveries imply about 17 days of white diesel, 24 days of petrol and 26 days of jet fuel."
+      "score": 46,
+      "band": "Elevated",
+      "detail": "DESNZ stocks at end of August 2026 [provisional]: 9.0 million tonnes in total, 8.2 million tonnes physically in the UK. That is -17% on the same month a year earlier. Against the last ten years of months, this total sits around the 3th percentile. The last quarterly note said end-June stocks still more than met the IEA 90-day net-import rule. That rule is not the same as fuel in the depot. July deliveries imply about 21 days of white diesel, 26 days of petrol and 23 days of jet fuel."
     },
     {
       "name": "Fuel in the depot",
-      "score": 62,
+      "score": 53,
       "band": "Elevated",
       "detail": "Days of petrol, diesel and jet implied by the latest month of deliveries. This is working stock, not the IEA reserve."
     },
     {
       "name": "Gas in store",
-      "score": 29,
+      "score": 32,
       "band": "Watch",
-      "detail": "National Gas, 28/10/2026: medium-range storage 12,920 (68%). Long-range is published at 0 (0%), so it is not a buffer. LNG tanks held 7,986 GWh at 28/10/2026 15:00. Today's gas demand forecast is 191.0 million cubic metres, against a margins-notice trigger of 464.0. No notice is in force. Storage cannot carry a normal day on its own. Pipelines and cargoes do that."
+      "detail": "National Gas, 30/10/2026: medium-range storage 12,180 (64%). Long-range is published at 0 (0%), so it is not a buffer. LNG tanks held 7,558 GWh at 30/10/2026 15:00. Today's gas demand forecast is 186.9 million cubic metres, against a margins-notice trigger of 484.0. No notice is in force. Storage cannot carry a normal day on its own. Pipelines and cargoes do that."
     },
     {
       "name": "Gas day balance",
-      "score": 15,
+      "score": 14,
       "band": "Calm",
       "detail": "Today's demand versus the level that would trigger a National Gas margins notice."
     },
     {
       "name": "Power spare",
-      "score": 42,
+      "score": 39,
       "band": "Watch",
-      "detail": "Tightest day in the next fortnight is 2026-11-06: forecast national demand 38.6 GW, spare generation 6.6 GW, so the peak uses 85% of what NESO is counting as available. Live demand at 2026-10-29T08:40:00Z was 34.2 GW. Night demand is not the tight moment."
+      "detail": "Tightest day in the next fortnight is 2026-11-06: forecast national demand 38.2 GW, spare generation 7.1 GW, so the peak uses 84% of what NESO is counting as available. Live demand at 2026-10-31T11:30:00Z was 27.8 GW. Night demand is not the tight moment."
+    },
+    {
+      "name": "World grain stocks",
+      "score": null,
+      "band": null,
+      "detail": "USDA WASDE October 2026. Wheat stocks are 276 million tonnes, 33.3% of use, -0.1 pts on the month. Wheat is the bread crop. Corn stocks are 280 million tonnes, 21.2% of use, +0.6 pts on the month. Soybeans stocks are 124 million tonnes, 28.1% of use, +0.1 pts on the month. Corn and soy are feed, not bread. This tile is not in the food score. A comfortable world stock does not cancel a short UK harvest.",
+      "reading": "33.3%",
+      "change_pts": -0.1
     }
   ],
   "harvest": {
@@ -2222,153 +2239,186 @@
     "detail": "AHDB final 2026 survey: wheat 6.9 t/ha, 11% below the five-year average. Spring barley 17% below, oats 14% below. Oilseed rape was 19% above. They put it down to limited rain from spring onwards, with huge farm-to-farm gaps. Defra's England wheat tonnage is 10.8 million tonnes, 0.8% above 2025, but East of England and South East yields fell. Up on last year is not the same as a normal crop. Full UK figures are due 10 December 2026.",
     "notes": []
   },
+  "grain": {
+    "report": "October 2026",
+    "wheat": {
+      "name": "Wheat",
+      "role": "bread",
+      "stocks_mt": 276.04,
+      "use_mt": 827.9,
+      "stocks_use_pct": 33.3,
+      "prior_stocks_use_pct": 33.4,
+      "change_pts": -0.1
+    },
+    "corn": {
+      "name": "Corn",
+      "role": "feed",
+      "stocks_mt": 280.44,
+      "use_mt": 1320.47,
+      "stocks_use_pct": 21.2,
+      "prior_stocks_use_pct": 20.6,
+      "change_pts": 0.6
+    },
+    "soy": {
+      "name": "Soybeans",
+      "role": "feed",
+      "stocks_mt": 124.28,
+      "use_mt": 442.18,
+      "stocks_use_pct": 28.1,
+      "prior_stocks_use_pct": 28.0,
+      "change_pts": 0.1
+    },
+    "source": "https://www.usda.gov/oce/commodity/wasde/wasde1026.xml",
+    "detail": "USDA WASDE October 2026. Wheat stocks are 276 million tonnes, 33.3% of use, -0.1 pts on the month. Wheat is the bread crop. Corn stocks are 280 million tonnes, 21.2% of use, +0.6 pts on the month. Soybeans stocks are 124 million tonnes, 28.1% of use, +0.1 pts on the month. Corn and soy are feed, not bread. This tile is not in the food score. A comfortable world stock does not cancel a short UK harvest.",
+    "reading": "33.3%"
+  },
   "spare_detail": {
     "oil": {
-      "period": "July 2026 [provisional]",
-      "total_kt": 9603.97,
-      "uk_kt": 8716.42,
-      "yoy_pct": -10.3,
-      "percentile_10y": 16.8,
-      "petrol_days": 24.3,
-      "diesel_days": 17.3,
-      "jet_days": 25.5,
-      "emergency_score": 38,
-      "product_score": 62,
-      "stocks_url": "https://assets.publishing.service.gov.uk/media/6aba86affe72ed1e2b02f180/ET_3.11_SEP_26.xlsx",
-      "deliveries_url": "https://assets.publishing.service.gov.uk/media/6aba696b997a4b2950ccefe3/ET_3.13_SEP_26.xlsx",
-      "detail": "DESNZ stocks at end of July 2026 [provisional]: 9.6 million tonnes in total, 8.7 million tonnes physically in the UK. That is -10% on the same month a year earlier. Against the last ten years of months, this total sits around the 17th percentile. The last quarterly note said end-June stocks still more than met the IEA 90-day net-import rule. That rule is not the same as fuel in the depot. July deliveries imply about 17 days of white diesel, 24 days of petrol and 26 days of jet fuel."
+      "period": "August 2026 [provisional]",
+      "total_kt": 9038.83,
+      "uk_kt": 8151.29,
+      "yoy_pct": -16.8,
+      "percentile_10y": 3.4,
+      "petrol_days": 25.6,
+      "diesel_days": 21.0,
+      "jet_days": 22.7,
+      "emergency_score": 46,
+      "product_score": 53,
+      "stocks_url": "https://assets.publishing.service.gov.uk/media/6ae0caa3779378370fd80a66/ET_3.11_OCT_26.xlsx",
+      "deliveries_url": "https://assets.publishing.service.gov.uk/media/6ae0cabc779378370fd80a67/ET_3.13_OCT_26.xlsx",
+      "detail": "DESNZ stocks at end of August 2026 [provisional]: 9.0 million tonnes in total, 8.2 million tonnes physically in the UK. That is -17% on the same month a year earlier. Against the last ten years of months, this total sits around the 3th percentile. The last quarterly note said end-June stocks still more than met the IEA 90-day net-import rule. That rule is not the same as fuel in the depot. July deliveries imply about 21 days of white diesel, 26 days of petrol and 23 days of jet fuel."
     },
     "gas": {
       "ranges": {
         "Short": {
-          "date": "28/10/2026",
+          "date": "30/10/2026",
           "gwh_text": "0 (0%)",
           "gwh": 0.0,
           "fill_pct": 0.0,
           "max_flow": 0.0
         },
         "Medium": {
-          "date": "28/10/2026",
-          "gwh_text": "12,920 (68%)",
-          "gwh": 12920.0,
-          "fill_pct": 68.0,
-          "max_flow": 1089.0
+          "date": "30/10/2026",
+          "gwh_text": "12,180 (64%)",
+          "gwh": 12180.0,
+          "fill_pct": 64.0,
+          "max_flow": 1119.0
         },
         "Long": {
-          "date": "28/10/2026",
+          "date": "30/10/2026",
           "gwh_text": "0 (0%)",
           "gwh": 0.0,
           "fill_pct": 0.0,
           "max_flow": 88.0
         }
       },
-      "lng_gwh": 7986.0,
-      "lng_as_of": "28/10/2026 15:00",
-      "demand_mcm": 191.0,
-      "trigger_mcm": 464.0,
+      "lng_gwh": 7558.0,
+      "lng_as_of": "30/10/2026 15:00",
+      "demand_mcm": 186.9,
+      "trigger_mcm": 484.0,
       "flows": [
         {
           "flow": "Today's Forecast Flows into the NTS",
-          "value": "209 mscm",
-          "dateTime": "29/10/2026 08:10"
+          "value": "192 mscm",
+          "dateTime": "31/10/2026 11:10"
         },
         {
           "flow": "Today's Physical Flows into the NTS",
-          "value": "194 mscm",
-          "dateTime": "29/10/2026 08:00"
+          "value": "200 mscm",
+          "dateTime": "31/10/2026 11:00"
         }
       ],
-      "storage_score": 29,
-      "day_score": 15,
-      "detail": "National Gas, 28/10/2026: medium-range storage 12,920 (68%). Long-range is published at 0 (0%), so it is not a buffer. LNG tanks held 7,986 GWh at 28/10/2026 15:00. Today's gas demand forecast is 191.0 million cubic metres, against a margins-notice trigger of 464.0. No notice is in force. Storage cannot carry a normal day on its own. Pipelines and cargoes do that."
+      "storage_score": 32,
+      "day_score": 14,
+      "detail": "National Gas, 30/10/2026: medium-range storage 12,180 (64%). Long-range is published at 0 (0%), so it is not a buffer. LNG tanks held 7,558 GWh at 30/10/2026 15:00. Today's gas demand forecast is 186.9 million cubic metres, against a margins-notice trigger of 484.0. No notice is in force. Storage cannot carry a normal day on its own. Pipelines and cargoes do that."
     },
     "power": {
-      "latest_demand_mw": 34242,
-      "latest_time": "2026-10-29T08:40:00Z",
+      "latest_demand_mw": 27818,
+      "latest_time": "2026-10-31T11:30:00Z",
       "tight": {
         "date": "2026-11-06",
-        "demand_mw": 38570,
-        "spare_mw": 6621,
-        "use_pct": 85.3
+        "demand_mw": 38240,
+        "spare_mw": 7062,
+        "use_pct": 84.4
       },
       "days": [
         {
-          "date": "2026-10-31",
-          "demand_mw": 34160,
-          "spare_mw": 7534,
-          "use_pct": 81.9
-        },
-        {
-          "date": "2026-11-01",
-          "demand_mw": 36000,
-          "spare_mw": 8740,
-          "use_pct": 80.5
-        },
-        {
           "date": "2026-11-02",
-          "demand_mw": 38980,
-          "spare_mw": 8821,
-          "use_pct": 81.5
+          "demand_mw": 38680,
+          "spare_mw": 9293,
+          "use_pct": 80.6
         },
         {
           "date": "2026-11-03",
-          "demand_mw": 39040,
-          "spare_mw": 7722,
-          "use_pct": 83.5
+          "demand_mw": 38890,
+          "spare_mw": 7965,
+          "use_pct": 83.0
         },
         {
           "date": "2026-11-04",
-          "demand_mw": 39250,
-          "spare_mw": 7499,
-          "use_pct": 84.0
+          "demand_mw": 39080,
+          "spare_mw": 7988,
+          "use_pct": 83.0
         },
         {
           "date": "2026-11-05",
-          "demand_mw": 39310,
-          "spare_mw": 7455,
-          "use_pct": 84.1
+          "demand_mw": 39060,
+          "spare_mw": 8850,
+          "use_pct": 81.5
         },
         {
           "date": "2026-11-06",
-          "demand_mw": 38570,
-          "spare_mw": 6621,
-          "use_pct": 85.3
+          "demand_mw": 38240,
+          "spare_mw": 7062,
+          "use_pct": 84.4
         },
         {
           "date": "2026-11-07",
-          "demand_mw": 35530,
-          "spare_mw": 10169,
-          "use_pct": 77.7
+          "demand_mw": 36290,
+          "spare_mw": 8496,
+          "use_pct": 81.0
         },
         {
           "date": "2026-11-08",
-          "demand_mw": 36330,
-          "spare_mw": 11831,
-          "use_pct": 75.4
+          "demand_mw": 37560,
+          "spare_mw": 9565,
+          "use_pct": 79.7
         },
         {
           "date": "2026-11-09",
-          "demand_mw": 39130,
-          "spare_mw": 10493,
-          "use_pct": 78.9
+          "demand_mw": 39700,
+          "spare_mw": 8465,
+          "use_pct": 82.4
         },
         {
           "date": "2026-11-10",
-          "demand_mw": 39220,
-          "spare_mw": 10264,
-          "use_pct": 79.3
+          "demand_mw": 39310,
+          "spare_mw": 9076,
+          "use_pct": 81.2
         },
         {
           "date": "2026-11-11",
-          "demand_mw": 39350,
-          "spare_mw": 10353,
-          "use_pct": 79.2
+          "demand_mw": 39430,
+          "spare_mw": 9460,
+          "use_pct": 80.7
+        },
+        {
+          "date": "2026-11-12",
+          "demand_mw": 39340,
+          "spare_mw": 8653,
+          "use_pct": 82.0
+        },
+        {
+          "date": "2026-11-13",
+          "demand_mw": 38110,
+          "spare_mw": 10159,
+          "use_pct": 79.0
         }
       ],
-      "score": 42,
-      "detail": "Tightest day in the next fortnight is 2026-11-06: forecast national demand 38.6 GW, spare generation 6.6 GW, so the peak uses 85% of what NESO is counting as available. Live demand at 2026-10-29T08:40:00Z was 34.2 GW. Night demand is not the tight moment."
+      "score": 39,
+      "detail": "Tightest day in the next fortnight is 2026-11-06: forecast national demand 38.2 GW, spare generation 7.1 GW, so the peak uses 84% of what NESO is counting as available. Live demand at 2026-10-31T11:30:00Z was 27.8 GW. Night demand is not the tight moment."
     },
-    "score": 41,
+    "score": 39,
     "band": "Watch",
     "notes": [],
     "why": "Stocks and spare capacity, kept apart from the pump price. A high price does not mean the tanks are empty, and a full tank does not make diesel cheap."
@@ -2378,7 +2428,7 @@
       "id": "salad",
       "name": "Salad and tomatoes",
       "stance": "The live one",
-      "score": 43,
+      "score": 47,
       "note": "Spain, Morocco and Dutch glasshouses. Short shelf life, Dover, almost no stock."
     },
     {
@@ -2400,7 +2450,7 @@
       "name": "Eggs",
       "stance": "On the shelf",
       "score": 0,
-      "note": "Morrisons 32/32 in stock, cheapest \u00a31.80. Ocado 45/45 in stock, cheapest \u00a31.40. Trolley shows egg prices at Tesco, Morrisons, Sainsburys."
+      "note": "Morrisons 30/30 in stock, cheapest \u00a31.80. Ocado 45/45 in stock, cheapest \u00a31.40. Trolley shows egg prices at Tesco, Morrisons, Sainsburys."
     },
     {
       "id": "meat",
@@ -2415,8 +2465,8 @@
     "retailers": [
       {
         "retailer": "Morrisons",
-        "listed": 32,
-        "available": 32,
+        "listed": 30,
+        "available": 30,
         "unavailable": 0,
         "available_ratio": 1.0,
         "cheapest": {
@@ -2576,7 +2626,8 @@
   "errors": [],
   "method": [
     "Pump prices are the DESNZ weekly series from 2018. Stress is their percentile in that history, plus a kick if the last four weeks rose.",
-    "Brent, Dutch TTF gas and Chicago wheat are daily futures from Yahoo, scored on their own two-year percentile and 30-day change.",
+    "Brent, Dutch TTF gas and Chicago wheat are daily futures from Yahoo, scored on their own two-year percentile and 30-day change. The front-versus-next gap on Brent and wheat is shown beside the price. It is not a score.",
+    "World grain stocks are the latest USDA WASDE world stocks divided by use. Wheat is the bread crop. Corn and soy are feed. The tile is not in the food score, so a comfortable world stock cannot cancel a short UK harvest.",
     "Weather stress is the last 45 days of rain and temperature versus the same calendar window in the previous ten years, from Open-Meteo.",
     "This harvest uses the AHDB final 2026 survey against the five-year yield average, not the change versus last year. Defra's England tonnage is shown beside it and is not allowed to cancel the yield gap.",
     "Fruit and meat standing scores do not move daily. They are the structural exposure from the UK Food Security Report, not a live shock.",
