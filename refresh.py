@@ -12,7 +12,8 @@ import statistics
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
-from http_fetch import fetch_bytes
+from curve import BRENT_MONTHS, WHEAT_MONTHS, candidates, phrase, pick_curve
+from http_fetch import FetchError, fetch_bytes
 
 ROOT = Path(__file__).resolve().parent
 OUT = ROOT / "data" / "latest.json"
@@ -41,11 +42,50 @@ HOSTS = {
     "assets.publishing.service.gov.uk",
     "query1.finance.yahoo.com",
     "archive-api.open-meteo.com",
+    "www.usda.gov",
 }
 
 
-def fetch(url: str, timeout: int = 40) -> bytes:
-    return fetch_bytes(url, allow_hosts=HOSTS, timeout=timeout, max_bytes=8_000_000, headers={"User-Agent": UA, "Accept": "*/*"})
+def fetch(url: str, timeout: int = 40, max_bytes: int = 8_000_000) -> bytes:
+    return fetch_bytes(url, allow_hosts=HOSTS, timeout=timeout, max_bytes=max_bytes, headers={"User-Agent": UA, "Accept": "*/*"})
+
+
+def contract_quote(symbol: str) -> dict | None:
+    try:
+        row = yahoo(symbol, "5d")
+    except FetchError:
+        return None
+    if not row.get("price"):
+        return None
+    return {"symbol": symbol, "price": row["price"], "as_of": row["as_of"]}
+
+
+def attach_curve(market: dict | None, root: str, exchange: str, months: set[str], today: date) -> None:
+    if not market or not market.get("price"):
+        return
+    quotes = []
+    for symbol in candidates(root, exchange, months, today):
+        quote = contract_quote(symbol)
+        if quote:
+            quotes.append(quote)
+        if pick_curve(quotes, market["price"]):
+            break
+    curve = pick_curve(quotes, market["price"])
+    if curve:
+        market["curve"] = curve
+
+
+def load_grain() -> dict:
+    from grain import PAGE_URL, describe, latest_xml_url, parse_wasde
+
+    page = fetch(PAGE_URL, timeout=40, max_bytes=2_000_000).decode("utf-8", "replace")
+    xml_url = latest_xml_url(page)
+    balance = parse_wasde(fetch(xml_url, timeout=60, max_bytes=16_000_000))
+    balance["source"] = xml_url
+    balance["detail"] = describe(balance)
+    wheat = balance.get("wheat") or {}
+    balance["reading"] = None if wheat.get("stocks_use_pct") is None else f"{wheat['stocks_use_pct']:.1f}%"
+    return balance
 
 
 def yahoo(symbol: str, range_: str = "2y") -> dict:
@@ -260,6 +300,21 @@ def main() -> None:
         except Exception as exc:
             errors.append(f"{key}: {exc}")
             markets[key] = None
+
+    try:
+        attach_curve(markets.get("brent"), "BZ", "NYM", BRENT_MONTHS, today)
+    except Exception as exc:
+        errors.append(f"brent curve: {exc}")
+    try:
+        attach_curve(markets.get("wheat"), "ZW", "CBT", WHEAT_MONTHS, today)
+    except Exception as exc:
+        errors.append(f"wheat curve: {exc}")
+
+    grain = None
+    try:
+        grain = load_grain()
+    except Exception as exc:
+        errors.append(f"grain: {exc}")
 
     regions = []
     for region in REGIONS:
@@ -491,6 +546,25 @@ def main() -> None:
         part("Gas day balance", (spare.get("gas") or {}).get("day_score") if spare else None, "Today's demand versus the level that would trigger a National Gas margins notice."),
         part("Power spare", (spare.get("power") or {}).get("score") if spare else None, (spare.get("power") or {}).get("detail") if spare else "Power margin did not load."),
     ]
+    if grain and grain.get("reading"):
+        grain_part = part("World grain stocks", None, grain["detail"])
+        grain_part["reading"] = grain["reading"]
+        grain_part["change_pts"] = (grain.get("wheat") or {}).get("change_pts")
+        parts.append(grain_part)
+
+    def with_curve(detail: str, key: str, label: str) -> str:
+        curve = ((markets.get(key) or {}).get("curve")) or {}
+        text = phrase(curve.get("curve_pct"))
+        if not text:
+            return detail
+        when = curve.get("as_of") or "the latest settle"
+        return detail + f" {label}: {text}, settle {when}. Nearby tightness is not folded into the price score."
+
+    for item in parts:
+        if item["name"] == "Wheat price":
+            item["detail"] = with_curve(item["detail"], "wheat", "Wheat")
+        elif item["name"] == "Oil and gas prices":
+            item["detail"] = with_curve(item["detail"], "brent", "Brent")
 
     payload = {
         "generated_at": now.isoformat(),
@@ -536,6 +610,9 @@ def main() -> None:
                 "as_of": markets[key]["as_of"],
                 "change_30d_pct": pct_change(markets[key]["series"], 30),
                 "percentile_2y": percentile(markets[key]["price"], [r["close"] for r in markets[key]["series"]]),
+                "curve_pct": (markets[key].get("curve") or {}).get("curve_pct"),
+                "curve_label": phrase((markets[key].get("curve") or {}).get("curve_pct")),
+                "curve_as_of": (markets[key].get("curve") or {}).get("as_of"),
                 "series": markets[key]["series"][-120:],
             }
             for key in TICKERS
@@ -543,13 +620,15 @@ def main() -> None:
         "regions": regions,
         "parts": parts,
         "harvest": harvest,
+        "grain": grain,
         "spare_detail": spare,
         "categories": categories,
         "shelf": shelf,
         "errors": errors,
         "method": [
             "Pump prices are the DESNZ weekly series from 2018. Stress is their percentile in that history, plus a kick if the last four weeks rose.",
-            "Brent, Dutch TTF gas and Chicago wheat are daily futures from Yahoo, scored on their own two-year percentile and 30-day change.",
+            "Brent, Dutch TTF gas and Chicago wheat are daily futures from Yahoo, scored on their own two-year percentile and 30-day change. The front-versus-next gap on Brent and wheat is shown beside the price. It is not a score.",
+            "World grain stocks are the latest USDA WASDE world stocks divided by use. Wheat is the bread crop. Corn and soy are feed. The tile is not in the food score, so a comfortable world stock cannot cancel a short UK harvest.",
             "Weather stress is the last 45 days of rain and temperature versus the same calendar window in the previous ten years, from Open-Meteo.",
             "This harvest uses the AHDB final 2026 survey against the five-year yield average, not the change versus last year. Defra's England tonnage is shown beside it and is not allowed to cancel the yield gap.",
             "Fruit and meat standing scores do not move daily. They are the structural exposure from the UK Food Security Report, not a live shock.",

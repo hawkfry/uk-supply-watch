@@ -41,14 +41,20 @@ def main() -> int:
             print("Eggs on the shelf: " + ", ".join(bits) + ".")
     if pumps:
         print(f"Pumps week of {pumps.get('date')}: petrol {pumps.get('petrol')}p, diesel {pumps.get('diesel')}p.")
+    grain = d.get("grain") or {}
+    wheat = grain.get("wheat") or {}
+    if wheat.get("stocks_use_pct") is not None:
+        change = wheat.get("change_pts")
+        moved = "no month change" if change is None else f"{change:+.1f} pts on the month"
+        print(f"World wheat stocks {wheat['stocks_use_pct']}% of use, {grain.get('report')}, {moved}. Not in the food score.")
+    markets = d.get("markets") or {}
+    for key, label in (("brent", "Brent"), ("wheat", "Wheat")):
+        row = markets.get(key) or {}
+        if row.get("curve_label"):
+            print(f"{label} nearby: {row['curve_label']}, settle {row.get('curve_as_of')}. Not a score.")
     if d.get("errors"):
         print("Feeds that failed: " + "; ".join(d["errors"]))
-    print("Open on your phone: ", end="")
-    url_file = ROOT / "data" / "phone-url.txt"
-    if url_file.exists():
-        print(url_file.read_text().strip())
-    else:
-        print("http://127.0.0.1:8765 on this Mac.")
+    print("Open on your phone: https://hawkfry.github.io/uk-supply-watch/")
     if proc.returncode:
         print("Refresh exited", proc.returncode)
         return proc.returncode

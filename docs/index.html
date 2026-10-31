@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-7nZtHCmVoDMSfFJnrohDRE8qA8hS+ml7yQTYTdW8oRI='; style-src 'unsafe-inline'; connect-src 'self'; img-src 'self'; base-uri 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-SFKFqlctXHQgRFrO2eCHFsyT/3HxTRFBzLMCxaVQVQs='; style-src 'unsafe-inline'; connect-src 'self'; img-src 'self'; base-uri 'none'; object-src 'none'">
 <title>UK supply watch</title>
 <style>
   :root {
@@ -427,6 +427,13 @@ function move(kind, label) {
   return { kind, arrow, label };
 }
 
+function curveMove(market) {
+  if (!market || !market.curve_label) return null;
+  const pct = finite(market.curve_pct);
+  const kind = pct != null && pct < -0.4 ? "worse" : pct != null && pct > 0.4 ? "easing" : "flat";
+  return move(kind, market.curve_label);
+}
+
 function trendFor(name, d) {
   const pumps = d.pumps || {};
   const markets = d.markets || {};
@@ -449,6 +456,7 @@ function trendFor(name, d) {
     const kind = ch > 3 ? "worse" : ch < -3 ? "easing" : "flat";
     return {
     move: move(kind, `gas ${signed(ch)}%`),
+    extra: curveMove(markets.brent),
     glance: "30 days",
     series: closes(markets.ttf)
     };
@@ -456,7 +464,7 @@ function trendFor(name, d) {
   if (name === "Wheat price") {
     const ch = markets.wheat && markets.wheat.change_30d_pct;
     const kind = ch > 3 ? "worse" : ch < -3 ? "easing" : "flat";
-    return { move: move(kind, `${signed(ch)}%`), glance: "futures, 30 days", series: closes(markets.wheat) };
+    return { move: move(kind, `${signed(ch)}%`), extra: curveMove(markets.wheat), glance: "futures, 30 days", series: closes(markets.wheat) };
   }
   if (name === "This harvest") {
     const gap = finite(harvest.wheat_vs_five_year_pct);
@@ -504,6 +512,12 @@ function trendFor(name, d) {
     const kind = rainPct <= -25 ? "worse" : rainPct >= 25 ? "easing" : "flat";
     return { move: move(kind, `${dry.name} ${signed(rainPct)}%`), series: [] };
   }
+  if (name === "World grain stocks") {
+    const wheat = d.grain && d.grain.wheat;
+    const ch = finite(wheat && wheat.change_pts);
+    const kind = ch != null && ch > 0.4 ? "easing" : ch != null && ch < -0.4 ? "worse" : "flat";
+    return { move: move(kind, ch == null ? "of use" : `${signed(ch, 1)} pts`), series: [] };
+  }
   if (name === "Shelf") return { move: move("flat", ""), series: [] };
   if (name === "Usual cereal supply" || name === "Usual fresh food") {
     return { move: move("flat", ""), series: [] };
@@ -522,16 +536,20 @@ function render(d) {
   const parts = (d.parts || []).slice().sort((a, b) => (b.score ?? -1) - (a.score ?? -1));
   document.getElementById("board").innerHTML = parts.map(p => {
     const t = trendFor(p.name, d);
-    const band = p.band || bandOf(p.score);
-    const scoreText = showNum(p.score);
+    const band = p.reading ? "" : (p.band || bandOf(p.score));
+    const scoreText = p.reading || showNum(p.score);
+    const extra = t.extra && t.extra.label
+      ? `<div class="move ${t.extra.kind}">${t.extra.arrow} ${esc(t.extra.label)}</div>`
+      : "";
     return `<article class="tile">
       <button type="button" class="info" aria-label="About ${esc(p.name)}" data-name="${esc(p.name)}" data-score="${esc(scoreText)}" data-band="${esc(band)}" data-detail="${esc(p.detail || "")}"><span>i</span></button>
       <div class="tile-top">
         <div class="name">${esc(p.name)}</div>
         ${t.move.label ? `<div class="move ${t.move.kind}">${t.move.arrow} ${esc(t.move.label)}</div>` : ""}
+        ${extra}
       </div>
       <div class="num" data-band="${esc(band)}">${esc(scoreText)}</div>
-      <div class="bandname" data-band="${esc(band)}">${esc(band || "")}</div>
+      <div class="bandname" data-band="${esc(band)}">${esc(band || (p.reading ? "of use" : ""))}</div>
       ${spark(t.series, bandColor(band))}
     </article>`;
   }).join("");
@@ -552,8 +570,8 @@ function render(d) {
   }).join("");
 
   document.getElementById("notes").innerHTML = parts.map(p => {
-    const band = p.band || bandOf(p.score);
-    const scoreText = showNum(p.score);
+    const band = p.reading ? "" : (p.band || bandOf(p.score));
+    const scoreText = p.reading || showNum(p.score);
     return `<article class="note">
       <div class="num" data-band="${esc(band)}">${esc(scoreText)}</div>
       <div>
