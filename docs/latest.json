@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-10-31T11:38:33.649117+00:00",
-  "as_of": "2026-10-31",
+  "generated_at": "2026-11-01T07:14:40.403923+00:00",
+  "as_of": "2026-11-01",
   "disclaimer": "A watch index for UK type shortages and fuel stress. Individual scores come first. The overall is a blend and does not cancel a bad harvest. It does not see supermarket shelves, and it is not a prediction that a shop will be empty.",
   "food": {
     "score": 48,
@@ -45,14 +45,14 @@
     ]
   },
   "fuel": {
-    "score": 94,
+    "score": 92,
     "band": "Severe",
-    "why": "diesel is 199p and petrol 174p, week of 2026-10-26. diesel is at the 99th percentile of pump prices since 2018. Brent is $118, +14% in 30 days. Dutch gas is 104, +44% in 30 days. Stocks and spare capacity are scored separately and do not cancel this."
+    "why": "diesel is 199p and petrol 174p, week of 2026-10-26. diesel is at the 99th percentile of pump prices since 2018. Brent is $113, +10% in 30 days. Dutch gas is 104, +44% in 30 days. Stocks and spare capacity are scored separately and do not cancel this."
   },
   "spare": {
-    "score": 39,
-    "band": "Watch",
-    "why": "white diesel in the depot covers about 21 days of the latest month's deliveries. the tightest power day still has 7.1 GW spare. these scores are not the pump price, and a calm spare reading does not make diesel cheap."
+    "score": 56,
+    "band": "Elevated",
+    "why": "white diesel in the depot covers about 21 days of the latest month's deliveries. the tightest power day still has 0.8 GW spare. these scores are not the pump price, and a calm spare reading does not make diesel cheap."
   },
   "pumps": {
     "latest": {
@@ -595,12 +595,12 @@
       "name": "Brent Crude Oil Last Day Financ",
       "symbol": "BZ=F",
       "currency": "USD",
-      "price": 117.64,
+      "price": 113.43,
       "as_of": "2026-10-30",
-      "change_30d_pct": 13.6,
-      "percentile_2y": 99.6,
-      "curve_pct": -3.6,
-      "curve_label": "front 3.6% dearer",
+      "change_30d_pct": 9.6,
+      "percentile_2y": 98.2,
+      "curve_pct": -3.4,
+      "curve_label": "front 3.4% dearer",
       "curve_as_of": "2026-10-30",
       "series": [
         {
@@ -1081,7 +1081,7 @@
         },
         {
           "date": "2026-10-30",
-          "close": 117.64
+          "close": 113.43
         }
       ]
     },
@@ -1586,7 +1586,7 @@
       "price": 603.5,
       "as_of": "2026-10-30",
       "change_30d_pct": -10.7,
-      "percentile_2y": 76.3,
+      "percentile_2y": 76.2,
       "curve_pct": 2.2,
       "curve_label": "front 2.2% cheaper",
       "curve_as_of": "2026-10-30",
@@ -2079,25 +2079,25 @@
       "id": "almeria",
       "name": "Almer\u00eda",
       "role": "Spanish salad and tomatoes",
-      "window": "2026-09-15 to 2026-10-29",
+      "window": "2026-09-16 to 2026-10-30",
       "rain_mm": 56.4,
-      "normal_rain_mm": 22.0,
-      "rain_vs_normal_pct": 157.0,
+      "normal_rain_mm": 23.0,
+      "rain_vs_normal_pct": 146.0,
       "dryness_percentile": 20.0,
-      "temp_c": 22.4,
-      "temp_percentile": 60.0,
+      "temp_c": 22.3,
+      "temp_percentile": 70.0,
       "stress": 20
     },
     {
       "id": "agadir",
       "name": "Agadir",
       "role": "Moroccan tomatoes",
-      "window": "2026-09-15 to 2026-10-29",
+      "window": "2026-09-16 to 2026-10-30",
       "rain_mm": 9.4,
       "normal_rain_mm": 16.4,
       "rain_vs_normal_pct": -43.0,
       "dryness_percentile": 60.0,
-      "temp_c": 23.2,
+      "temp_c": 23.1,
       "temp_percentile": 80.0,
       "stress": 60
     },
@@ -2105,12 +2105,12 @@
       "id": "westland",
       "name": "Westland",
       "role": "Dutch glasshouses",
-      "window": "2026-09-15 to 2026-10-29",
-      "rain_mm": 153.4,
-      "normal_rain_mm": 144.9,
-      "rain_vs_normal_pct": 6.0,
+      "window": "2026-09-16 to 2026-10-30",
+      "rain_mm": 152.8,
+      "normal_rain_mm": 148.6,
+      "rain_vs_normal_pct": 3.0,
       "dryness_percentile": 50.0,
-      "temp_c": 14.3,
+      "temp_c": 14.0,
       "temp_percentile": 90.0,
       "stress": 60
     },
@@ -2118,12 +2118,12 @@
       "id": "anglia",
       "name": "East Anglia",
       "role": "UK wheat and field veg",
-      "window": "2026-09-15 to 2026-10-29",
+      "window": "2026-09-16 to 2026-10-30",
       "rain_mm": 83.9,
-      "normal_rain_mm": 93.4,
-      "rain_vs_normal_pct": -10.0,
+      "normal_rain_mm": 94.1,
+      "rain_vs_normal_pct": -11.0,
       "dryness_percentile": 50.0,
-      "temp_c": 13.9,
+      "temp_c": 13.7,
       "temp_percentile": 90.0,
       "stress": 60
     }
@@ -2169,13 +2169,13 @@
       "name": "Pump prices",
       "score": 90,
       "band": "Severe",
-      "detail": "diesel is 199p and petrol 174p, week of 2026-10-26. diesel is at the 99th percentile of pump prices since 2018. Brent is $118, +14% in 30 days. Dutch gas is 104, +44% in 30 days."
+      "detail": "diesel is 199p and petrol 174p, week of 2026-10-26. diesel is at the 99th percentile of pump prices since 2018. Brent is $113, +10% in 30 days. Dutch gas is 104, +44% in 30 days."
     },
     {
       "name": "Oil and gas prices",
-      "score": 98,
+      "score": 95,
       "band": "Severe",
-      "detail": "Brent and Dutch gas, each versus their own two-year range, then averaged. Price is not stock. Brent: front 3.6% dearer, settle 2026-10-30. Nearby tightness is not folded into the price score."
+      "detail": "Brent and Dutch gas, each versus their own two-year range, then averaged. Price is not stock. Brent: front 3.4% dearer, settle 2026-10-30. Nearby tightness is not folded into the price score."
     },
     {
       "name": "Emergency oil stocks",
@@ -2191,21 +2191,21 @@
     },
     {
       "name": "Gas in store",
-      "score": 32,
+      "score": 33,
       "band": "Watch",
-      "detail": "National Gas, 30/10/2026: medium-range storage 12,180 (64%). Long-range is published at 0 (0%), so it is not a buffer. LNG tanks held 7,558 GWh at 30/10/2026 15:00. Today's gas demand forecast is 186.9 million cubic metres, against a margins-notice trigger of 484.0. No notice is in force. Storage cannot carry a normal day on its own. Pipelines and cargoes do that."
+      "detail": "National Gas, 31/10/2026: medium-range storage 11,996 (63%). Long-range is published at 0 (0%), so it is not a buffer. LNG tanks held 7,365 GWh at 31/10/2026 15:00. Today's gas demand forecast is 197.5 million cubic metres, against a margins-notice trigger of 484.0. No notice is in force. Storage cannot carry a normal day on its own. Pipelines and cargoes do that."
     },
     {
       "name": "Gas day balance",
-      "score": 14,
+      "score": 15,
       "band": "Calm",
       "detail": "Today's demand versus the level that would trigger a National Gas margins notice."
     },
     {
       "name": "Power spare",
-      "score": 39,
-      "band": "Watch",
-      "detail": "Tightest day in the next fortnight is 2026-11-06: forecast national demand 38.2 GW, spare generation 7.1 GW, so the peak uses 84% of what NESO is counting as available. Live demand at 2026-10-31T11:30:00Z was 27.8 GW. Night demand is not the tight moment."
+      "score": 96,
+      "band": "Severe",
+      "detail": "Tightest day in the next fortnight is 2026-11-12: forecast national demand 39.3 GW, spare generation 0.8 GW, so the peak uses 98% of what NESO is counting as available. Live demand at 2026-11-01T07:05:00Z was 25.7 GW. Night demand is not the tight moment."
     },
     {
       "name": "World grain stocks",
@@ -2291,135 +2291,135 @@
     "gas": {
       "ranges": {
         "Short": {
-          "date": "30/10/2026",
+          "date": "31/10/2026",
           "gwh_text": "0 (0%)",
           "gwh": 0.0,
           "fill_pct": 0.0,
           "max_flow": 0.0
         },
         "Medium": {
-          "date": "30/10/2026",
-          "gwh_text": "12,180 (64%)",
-          "gwh": 12180.0,
-          "fill_pct": 64.0,
+          "date": "31/10/2026",
+          "gwh_text": "11,996 (63%)",
+          "gwh": 11996.0,
+          "fill_pct": 63.0,
           "max_flow": 1119.0
         },
         "Long": {
-          "date": "30/10/2026",
+          "date": "31/10/2026",
           "gwh_text": "0 (0%)",
           "gwh": 0.0,
           "fill_pct": 0.0,
           "max_flow": 88.0
         }
       },
-      "lng_gwh": 7558.0,
-      "lng_as_of": "30/10/2026 15:00",
-      "demand_mcm": 186.9,
+      "lng_gwh": 7365.0,
+      "lng_as_of": "31/10/2026 15:00",
+      "demand_mcm": 197.5,
       "trigger_mcm": 484.0,
       "flows": [
         {
           "flow": "Today's Forecast Flows into the NTS",
-          "value": "192 mscm",
-          "dateTime": "31/10/2026 11:10"
+          "value": "204 mscm",
+          "dateTime": "01/11/2026 07:10"
         },
         {
           "flow": "Today's Physical Flows into the NTS",
-          "value": "200 mscm",
-          "dateTime": "31/10/2026 11:00"
+          "value": "204 mscm",
+          "dateTime": "01/11/2026 07:00"
         }
       ],
-      "storage_score": 32,
-      "day_score": 14,
-      "detail": "National Gas, 30/10/2026: medium-range storage 12,180 (64%). Long-range is published at 0 (0%), so it is not a buffer. LNG tanks held 7,558 GWh at 30/10/2026 15:00. Today's gas demand forecast is 186.9 million cubic metres, against a margins-notice trigger of 484.0. No notice is in force. Storage cannot carry a normal day on its own. Pipelines and cargoes do that."
+      "storage_score": 33,
+      "day_score": 15,
+      "detail": "National Gas, 31/10/2026: medium-range storage 11,996 (63%). Long-range is published at 0 (0%), so it is not a buffer. LNG tanks held 7,365 GWh at 31/10/2026 15:00. Today's gas demand forecast is 197.5 million cubic metres, against a margins-notice trigger of 484.0. No notice is in force. Storage cannot carry a normal day on its own. Pipelines and cargoes do that."
     },
     "power": {
-      "latest_demand_mw": 27818,
-      "latest_time": "2026-10-31T11:30:00Z",
+      "latest_demand_mw": 25728,
+      "latest_time": "2026-11-01T07:05:00Z",
       "tight": {
-        "date": "2026-11-06",
-        "demand_mw": 38240,
-        "spare_mw": 7062,
-        "use_pct": 84.4
+        "date": "2026-11-12",
+        "demand_mw": 39290,
+        "spare_mw": 849,
+        "use_pct": 97.9
       },
       "days": [
         {
-          "date": "2026-11-02",
-          "demand_mw": 38680,
-          "spare_mw": 9293,
-          "use_pct": 80.6
-        },
-        {
           "date": "2026-11-03",
-          "demand_mw": 38890,
-          "spare_mw": 7965,
-          "use_pct": 83.0
-        },
-        {
-          "date": "2026-11-04",
-          "demand_mw": 39080,
-          "spare_mw": 7988,
-          "use_pct": 83.0
-        },
-        {
-          "date": "2026-11-05",
-          "demand_mw": 39060,
-          "spare_mw": 8850,
-          "use_pct": 81.5
-        },
-        {
-          "date": "2026-11-06",
-          "demand_mw": 38240,
-          "spare_mw": 7062,
-          "use_pct": 84.4
-        },
-        {
-          "date": "2026-11-07",
-          "demand_mw": 36290,
-          "spare_mw": 8496,
-          "use_pct": 81.0
-        },
-        {
-          "date": "2026-11-08",
-          "demand_mw": 37560,
-          "spare_mw": 9565,
-          "use_pct": 79.7
-        },
-        {
-          "date": "2026-11-09",
-          "demand_mw": 39700,
-          "spare_mw": 8465,
-          "use_pct": 82.4
-        },
-        {
-          "date": "2026-11-10",
-          "demand_mw": 39310,
-          "spare_mw": 9076,
+          "demand_mw": 38780,
+          "spare_mw": 9005,
           "use_pct": 81.2
         },
         {
+          "date": "2026-11-04",
+          "demand_mw": 38820,
+          "spare_mw": 9512,
+          "use_pct": 80.3
+        },
+        {
+          "date": "2026-11-05",
+          "demand_mw": 38960,
+          "spare_mw": 1539,
+          "use_pct": 96.2
+        },
+        {
+          "date": "2026-11-06",
+          "demand_mw": 38180,
+          "spare_mw": 1892,
+          "use_pct": 95.3
+        },
+        {
+          "date": "2026-11-07",
+          "demand_mw": 35880,
+          "spare_mw": 3998,
+          "use_pct": 90.0
+        },
+        {
+          "date": "2026-11-08",
+          "demand_mw": 37370,
+          "spare_mw": 3614,
+          "use_pct": 91.2
+        },
+        {
+          "date": "2026-11-09",
+          "demand_mw": 39800,
+          "spare_mw": 1238,
+          "use_pct": 97.0
+        },
+        {
+          "date": "2026-11-10",
+          "demand_mw": 39700,
+          "spare_mw": 1334,
+          "use_pct": 96.7
+        },
+        {
           "date": "2026-11-11",
-          "demand_mw": 39430,
-          "spare_mw": 9460,
-          "use_pct": 80.7
+          "demand_mw": 39390,
+          "spare_mw": 1638,
+          "use_pct": 96.0
         },
         {
           "date": "2026-11-12",
-          "demand_mw": 39340,
-          "spare_mw": 8653,
-          "use_pct": 82.0
+          "demand_mw": 39290,
+          "spare_mw": 849,
+          "use_pct": 97.9
         },
         {
           "date": "2026-11-13",
-          "demand_mw": 38110,
-          "spare_mw": 10159,
-          "use_pct": 79.0
+          "demand_mw": 38070,
+          "spare_mw": 2491,
+          "use_pct": 93.9
+        },
+        {
+          "date": "2026-11-14",
+          "demand_mw": 35720,
+          "spare_mw": 4403,
+          "use_pct": 89.0
         }
       ],
-      "score": 39,
-      "detail": "Tightest day in the next fortnight is 2026-11-06: forecast national demand 38.2 GW, spare generation 7.1 GW, so the peak uses 84% of what NESO is counting as available. Live demand at 2026-10-31T11:30:00Z was 27.8 GW. Night demand is not the tight moment."
+      "score": 96,
+      "detail": "Tightest day in the next fortnight is 2026-11-12: forecast national demand 39.3 GW, spare generation 0.8 GW, so the peak uses 98% of what NESO is counting as available. Live demand at 2026-11-01T07:05:00Z was 25.7 GW. Night demand is not the tight moment."
     },
-    "score": 39,
-    "band": "Watch",
+    "score": 56,
+    "band": "Elevated",
     "notes": [],
     "why": "Stocks and spare capacity, kept apart from the pump price. A high price does not mean the tanks are empty, and a full tank does not make diesel cheap."
   },
